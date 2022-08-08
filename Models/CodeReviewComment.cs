@@ -26,7 +26,7 @@ namespace TFSCodeReviewTool.Models
         {
             if (StartLineNumber.HasValue)
             {
-                if (StartLineNumber == EndLineNumber)
+                if (EndLineNumber == StartLineNumber + 1)
                 {
                     return $"{StartLineNumber}";
                 }

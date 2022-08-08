@@ -1,6 +1,7 @@
 ﻿using Microsoft.TeamFoundation.Discussion.Client;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TFSCodeReviewTool.Models;
 
 namespace TFSCodeReviewTool.Managers.Managers
@@ -28,17 +29,20 @@ namespace TFSCodeReviewTool.Managers.Managers
             IAsyncResult result = discussionManager.BeginQueryByCodeReviewRequest(reviewId, QueryStoreOptions.ServerAndLocal, new AsyncCallback(CallCompletedCallback), null);
             var discussionThreads = discussionManager.EndQueryByCodeReviewRequest(result);
 
-            CodeReview codeReview = new CodeReview(discussionThreads, reviewId, _ProjectName);
-
-            foreach (var discussionThread in discussionThreads)
+            if (discussionThreads.Count() > 1)
             {
-                if (discussionThread.RootComment != null)
-                {
-                    comments.Add(new CodeReviewComment(discussionThread));
-                }
-            }
+                CodeReview codeReview = new CodeReview(discussionThreads, reviewId, _ProjectName);
 
-            return Tuple.Create(codeReview, comments);
+                foreach (var discussionThread in discussionThreads)
+                {
+                    if (discussionThread.RootComment != null)
+                    {
+                        comments.Add(new CodeReviewComment(discussionThread));
+                    }
+                }
+                return Tuple.Create(codeReview, comments);
+            }
+            return null;
         }
 
         private Uri GetProjectUrl()
