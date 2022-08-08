@@ -1,7 +1,7 @@
 ﻿using Microsoft.TeamFoundation.Discussion.Client;
 using System.IO;
 
-namespace TFSCodeReviewTool
+namespace TFSCodeReviewTool.Models
 {
     public class CodeReviewComment
     {
@@ -10,6 +10,7 @@ namespace TFSCodeReviewTool
         public int? StartLineNumber { get; private set; }
         public int? EndLineNumber { get; private set; }
         public string LineSpanText { get; }
+        public bool IsMainComment { get; set; }
 
         public CodeReviewComment(DiscussionThread discussionThread)
         {
@@ -18,6 +19,7 @@ namespace TFSCodeReviewTool
             StartLineNumber = discussionThread.Position?.StartLine;
             EndLineNumber = discussionThread.Position?.EndLine;
             LineSpanText = GetLineSpanText();
+            IsMainComment = string.IsNullOrEmpty(FileName);
         }
 
         private string GetLineSpanText()
@@ -26,11 +28,11 @@ namespace TFSCodeReviewTool
             {
                 if (StartLineNumber == EndLineNumber)
                 {
-                    return $"Line: {StartLineNumber}";
+                    return $"{StartLineNumber}";
                 }
                 else
                 {
-                    return $"Lines {StartLineNumber} to {EndLineNumber}";
+                    return $"{StartLineNumber} - {EndLineNumber}";
                 }
             }
             return string.Empty;

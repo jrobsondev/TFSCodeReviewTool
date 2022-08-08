@@ -2,9 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TFSCodeReviewTool.Properties;
 
-namespace TFSCodeReviewTool
+namespace TFSCodeReviewTool.Models
 {
     public class CodeReview
     {
@@ -17,11 +16,11 @@ namespace TFSCodeReviewTool
         public string ReviewForChangeset { get; }
         public string OverallComment { get; set; }
 
-        public CodeReview(IEnumerable<DiscussionThread> discussionThreads, int reviewId)
+        public CodeReview(IEnumerable<DiscussionThread> discussionThreads, int reviewId, string projectName)
         {
             var mainComment = discussionThreads.First(x => string.IsNullOrEmpty(x.ItemPath));
             var reviewerComment = discussionThreads.OrderByDescending(x => x.PublishedDate).First(x => x.RootComment.Author.UniqueName != mainComment.RootComment.Author.UniqueName);
-            ProjectName = Settings.Default.TFSProjectName; //See if can get this from code review comment
+            ProjectName = projectName;
             ReviewNumber = reviewId;
             ReviewForChangeset = mainComment.VersionUri.Segments.Last();
             ReviewForName = mainComment.RootComment.Author.DisplayName;
