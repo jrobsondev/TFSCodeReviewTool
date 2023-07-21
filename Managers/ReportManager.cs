@@ -1,20 +1,13 @@
-﻿using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using TFSCodeReviewTool.Properties;
+﻿using System.Collections.Generic;
 using TFSCodeReviewTool.ReportDataSources;
-using TFSCodeReviewTool.ReportElements;
 using TFSCodeReviewTool.Reports;
 
 namespace TFSCodeReviewTool
 {
     internal class ReportManager
     {
-        private string _SaveLocation;
-        private CodeReviewReport _CodeReviewReport;
+        private readonly string _SaveLocation;
+        private readonly CodeReviewReport _CodeReviewReport;
 
         public ReportManager(string saveLocation)
         {

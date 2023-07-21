@@ -35,7 +35,7 @@ namespace TFSCodeReviewTool.Models
                     return $"{StartLineNumber} - {EndLineNumber}";
                 }
             }
-            return string.Empty;
+            return "File";
         }
     }
 }

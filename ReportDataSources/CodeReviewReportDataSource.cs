@@ -7,14 +7,14 @@ namespace TFSCodeReviewTool.ReportDataSources
     internal class CodeReviewReportDataSource
     {
         public CodeReview CodeReview { get; }
-        public DateTime ReviewGeneratedOnDateTime { get; private set; }
         public List<CodeReviewComment> CodeReviewComments { get; }
+        public DateTime ReviewGeneratedOnDateTime { get; private set; }
 
-        public CodeReviewReportDataSource(Tuple<CodeReview, List<CodeReviewComment>> data)
+        public CodeReviewReportDataSource((CodeReview Review, List<CodeReviewComment> Comments) data)
         {
-            CodeReview = data.Item1;
+            CodeReview = data.Review;
+            CodeReviewComments = data.Comments;
             ReviewGeneratedOnDateTime = DateTime.Now;
-            CodeReviewComments = data.Item2;
         }
     }
 }

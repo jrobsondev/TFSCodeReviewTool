@@ -17,9 +17,9 @@ namespace TFSCodeReviewTool
             foreach (var reviewId in reviewIds)
             {
                 var codeReviewData = tfsManager.GetCodeReviewComments(reviewId);
-                if (codeReviewData != null) { reportDataSources.Add(new CodeReviewReportDataSource(codeReviewData)); }
+                if (codeReviewData != default) { reportDataSources.Add(new CodeReviewReportDataSource(codeReviewData)); }
             }
-            var reportManager = new ReportManager($"D:\\Temp\\{projectName}-CodeReviewReport-{DateTime.Now:yyyy-MM-dd}.pdf"); //get from args or put in settings
+            var reportManager = new ReportManager($"D:\\Temp\\{projectName}-CodeReviewReport-{DateTime.Now:yyyy-MM-dd-HH-mm}.pdf"); //get from args or put in settings
             reportManager.GenerateCodeReviewReportPDF(reportDataSources);
         }
     }
