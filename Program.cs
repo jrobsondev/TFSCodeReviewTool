@@ -1,26 +1,35 @@
-﻿using System;
+﻿using CommandLine;
+using System;
 using System.Collections.Generic;
 using TFSCodeReviewTool.Managers.Managers;
-using TFSCodeReviewTool.Properties;
 using TFSCodeReviewTool.ReportDataSources;
 
 namespace TFSCodeReviewTool
 {
-    internal class Program
+    internal static class Program
     {
         static void Main(string[] args)
         {
-            var reviewIds = new List<int>() { 291, 293, 295, 297, 299, 301, 302 }; //Get from args
-            var projectName = Settings.Default.TFSProjectName;
-            var tfsManager = new TFSManager(projectName);
+            Parser.Default.ParseArguments<Options>(args)
+                .WithParsed(RunOptions)
+                .WithNotParsed((err) => err.Output());
+        }
+
+        static void RunOptions(Options opts)
+        {
+            var tfsManager = new TFSManager(opts.ProjectName);
+            var saveLocationFilePath = string.IsNullOrEmpty(opts.SaveLocationFilePath) ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : opts.SaveLocationFilePath;
+            var reportManager = new ReportManager(saveLocationFilePath, opts.FileNameFormatString, opts.DateTimeFormatString);
             var reportDataSources = new List<CodeReviewReportDataSource>();
-            foreach (var reviewId in reviewIds)
+
+            foreach (var reviewId in opts.ReviewWorkItemIds)
             {
                 var codeReviewData = tfsManager.GetCodeReviewComments(reviewId);
                 if (codeReviewData != default) { reportDataSources.Add(new CodeReviewReportDataSource(codeReviewData)); }
             }
-            var reportManager = new ReportManager($"D:\\Temp\\{projectName}-CodeReviewReport-{DateTime.Now:yyyy-MM-dd-HH-mm}.pdf"); //get from args or put in settings
-            reportManager.GenerateCodeReviewReportPDF(reportDataSources);
+
+            if (opts.IndividualReports) { reportDataSources.ForEach(rds => reportManager.GenerateCodeReviewReportPDF(rds)); }
+            else { reportManager.GenerateCodeReviewReportPDF(reportDataSources); }
         }
     }
 }

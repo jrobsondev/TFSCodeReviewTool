@@ -38,6 +38,9 @@
     <Reference Include="Ben.Demystifier, Version=0.1.0.0, Culture=neutral, PublicKeyToken=a6d206e05440431a, processorArchitecture=MSIL">
       <HintPath>packages\Ben.Demystifier.0.1.3\lib\net45\Ben.Demystifier.dll</HintPath>
     </Reference>
+    <Reference Include="CommandLine, Version=2.9.1.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
+      <HintPath>packages\CommandLineParser.2.9.1\lib\net461\CommandLine.dll</HintPath>
+    </Reference>
     <Reference Include="HarfBuzzSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>packages\HarfBuzzSharp.2.6.1.9\lib\net462\HarfBuzzSharp.dll</HintPath>
     </Reference>
@@ -276,14 +279,10 @@
   <ItemGroup>
     <Compile Include="Models\CodeReview.cs" />
     <Compile Include="Models\CodeReviewComment.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="ReportDataSources\CodeReviewReportDataSource.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ReportElements\Table.cs" />
     <Compile Include="Managers\ReportManager.cs" />
     <Compile Include="Reports\CodeReviewReport.cs" />
@@ -292,10 +291,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
