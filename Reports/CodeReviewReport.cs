@@ -51,10 +51,9 @@ namespace TFSCodeReviewTool.Reports
                         grid.VerticalSpacing(1, Unit.Centimetre);
                         grid.Item(6).Grid(row =>
                         {
-                            row.Item(4).Text("Associated Changeset:").Bold(); row.Item(6).Text(codeReview.ReviewForChangeset);
                             row.Item(4).Text("Review Created By:").Bold(); row.Item(6).Text(codeReview.ReviewForName);
                             row.Item(4).Text("Review Created On:").Bold(); row.Item(6).Text(codeReview.ReviewSentOnDateTime);
-                            row.Item(4).Text("Reviewed By").Bold(); row.Item(6).Text(codeReview.ReviewByName);
+                            row.Item(4).Text("Reviewed By:").Bold(); row.Item(6).Text(codeReview.ReviewByName);
                             row.Item(4).Text("Reviewed On:").Bold(); row.Item(6).Text(codeReview.ReviewCompletedOnDateTime);
                         });
 

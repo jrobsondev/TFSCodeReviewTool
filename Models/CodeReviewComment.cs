@@ -15,18 +15,18 @@ namespace TFSCodeReviewTool.Models
         public CodeReviewComment(DiscussionThread discussionThread)
         {
             Comment = discussionThread.RootComment.Content;
-            FileName = Path.GetFileName(discussionThread.ItemPath);
+            var fileInfo = new FileInfo(discussionThread.ItemPath);
+            FileName = $@"{fileInfo.Directory.Name}\{fileInfo.Name}";
             StartLineNumber = discussionThread.Position?.StartLine;
             EndLineNumber = discussionThread.Position?.EndLine;
             LineSpanText = GetLineSpanText();
-            IsMainComment = string.IsNullOrEmpty(FileName);
         }
 
         private string GetLineSpanText()
         {
             if (StartLineNumber.HasValue)
             {
-                if (EndLineNumber == StartLineNumber + 1)
+                if (EndLineNumber == StartLineNumber + 1 || EndLineNumber == StartLineNumber)
                 {
                     return $"{StartLineNumber}";
                 }

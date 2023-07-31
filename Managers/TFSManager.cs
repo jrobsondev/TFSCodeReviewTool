@@ -1,7 +1,6 @@
 ﻿using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Discussion.Client;
-using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.Win32;
 using System;
@@ -42,19 +41,14 @@ namespace TFSCodeReviewTool.Managers.Managers
             var discussionService = new TeamFoundationDiscussionService();
             discussionService.Initialize(tpc);
             var discussionManager = discussionService.CreateDiscussionManager();
-
-            var projectURI = _TFSServerAddress;
-            var service = new TeamFoundationDiscussionService();
-            service.Initialize(new Microsoft.TeamFoundation.Client.TfsTeamProjectCollection(projectURI));
-            IDiscussionManager discussionManager = service.CreateDiscussionManager();
-
-            IAsyncResult result = discussionManager.BeginQueryByCodeReviewRequest(reviewId, QueryStoreOptions.ServerAndLocal, new AsyncCallback(CallCompletedCallback), null);
+            var workItemStore = tpc.GetService<WorkItemStore>();
+            var workItem = workItemStore.GetWorkItem(reviewId);
             var result = discussionManager.BeginQueryByCodeReviewRequest(reviewId, QueryStoreOptions.ServerAndLocal, new AsyncCallback(CallCompletedCallback), null);
             var discussionThreads = discussionManager.EndQueryByCodeReviewRequest(result);
 
             if (discussionThreads.Count() > 1)
             {
-                var codeReview = new CodeReview(discussionThreads, reviewId, _ProjectName);
+                var codeReview = new CodeReview(discussionThreads, _ProjectName, reviewId, workItem);
 
                 foreach (var discussionThread in discussionThreads)
                 {
@@ -71,7 +65,6 @@ namespace TFSCodeReviewTool.Managers.Managers
         private Uri GetProjectUrl()
         {
             var uri = new Uri(BASE_AZURE_ADDRESS);
-            Uri uri = new Uri(BASE_AZURE_ADDRESS);
             return new Uri(uri, _ProjectName);
         }
 
