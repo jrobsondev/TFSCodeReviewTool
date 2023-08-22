@@ -1,4 +1,5 @@
-﻿using QuestPDF.Fluent;
+﻿using Microsoft.VisualStudio.Services.Common;
+using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System;
@@ -32,6 +33,7 @@ namespace TFSCodeReviewTool.Reports
         {
             var codeReview = dataSource.CodeReview;
             var groupedComments = dataSource.CodeReviewComments.Where(x => x.FileName != null).GroupBy(x => x.FileName);
+            var mainComments = dataSource.CodeReviewComments.Where(x => x.IsMainComment);
             container.Page(page =>
             {
                 page.Size(PageSizes.A4.Landscape());
@@ -59,7 +61,7 @@ namespace TFSCodeReviewTool.Reports
 
                         grid.Item(6).Border(1, Unit.Point).Grid(row =>
                         {
-                            row.Item(12).Background(Colors.Grey.Lighten3).Border(1, Unit.Point).PaddingLeft(5).Text("Overall Comments").Bold();
+                            row.Item(12).Background(Colors.Grey.Lighten3).Border(1, Unit.Point).PaddingLeft(5).Text("Reviewee Comment").Bold();
                             row.Item(12).Padding(2).Text(codeReview.OverallComment).LineHeight(1);
                         });
 
@@ -78,18 +80,32 @@ namespace TFSCodeReviewTool.Reports
                             table.Cell().Row(rowIndex).Column(3).Element(Table.Header).Text("Comment").Bold();
 
                             rowIndex++;
+
+                            if (mainComments.Any())
+                            {
+                                table.Cell().Row(rowIndex).Column(1).RowSpan((uint)mainComments.Count()).Border(1, Unit.Point).PaddingLeft(5).Text("Overall Comments");
+                                mainComments.ForEach(x =>
+                                {
+                                    table.Cell().Row(rowIndex).Column(2).Border(1, Unit.Point).PaddingHorizontal(1).AlignCenter().Text(string.Empty);
+                                    table.Cell().Row(rowIndex).Column(3).Border(1, Unit.Point).PaddingLeft(5).Text(x.Comment).LineHeight(1);
+                                    rowIndex++;
+                                });
+                            }
+
                             foreach (var fileComment in groupedComments)
                             {
                                 var comments = fileComment.ToList();
                                 table.Cell().Row(rowIndex).Column(1).RowSpan((uint)comments.Count).Border(1, Unit.Point).PaddingLeft(5).Text(fileComment.Key);
-                                foreach (var comment in comments)
+                                comments.ForEach(x =>
                                 {
-                                    table.Cell().Row(rowIndex).Column(2).Border(1, Unit.Point).PaddingHorizontal(1).AlignCenter().Text(comment.LineSpanText);
-                                    table.Cell().Row(rowIndex).Column(3).Border(1, Unit.Point).PaddingLeft(5).Text(comment.Comment).LineHeight(1);
+                                    table.Cell().Row(rowIndex).Column(2).Border(1, Unit.Point).PaddingHorizontal(1).AlignCenter().Text(x.LineSpanText);
+                                    table.Cell().Row(rowIndex).Column(3).Border(1, Unit.Point).PaddingLeft(5).Text(x.Comment).LineHeight(1);
                                     rowIndex++;
-                                }
+                                });
                             }
                         });
+
+                        grid.Item(12).AlignRight().Text($"Total: {dataSource.CodeReviewComments.Count}").Bold().FontSize(12);
                     });
 
                 page.Footer()

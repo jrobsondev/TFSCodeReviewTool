@@ -15,8 +15,15 @@ namespace TFSCodeReviewTool.Models
         public CodeReviewComment(DiscussionThread discussionThread)
         {
             Comment = discussionThread.RootComment.Content;
-            var fileInfo = new FileInfo(discussionThread.ItemPath);
-            FileName = $@"{fileInfo.Directory.Name}\{fileInfo.Name}";
+            if (string.IsNullOrEmpty(discussionThread.ItemPath))
+            {
+                IsMainComment = true;
+            }
+            else
+            {
+                var fileInfo = new FileInfo(discussionThread.ItemPath);
+                FileName = $@"{fileInfo.Directory.Name}\{fileInfo.Name}";
+            }
             StartLineNumber = discussionThread.Position?.StartLine;
             EndLineNumber = discussionThread.Position?.EndLine;
             LineSpanText = GetLineSpanText();
