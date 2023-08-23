@@ -30,5 +30,8 @@ namespace TFSCodeReviewTool
             HelpText = "A format string for the datetime used in the filename",
             Default = "d")]
         public string DateTimeFormatString { get; set; }
+
+        [Option("opdf", Required = false, HelpText = "Automatically opens the PDF(s)", Default = false)]
+        public bool AutoOpenPDF { get; set; }
     }
 }

@@ -14,20 +14,32 @@ namespace TFSCodeReviewTool.Reports
 {
     internal class CodeReviewReport
     {
-        public void GeneratePDF(CodeReviewReportDataSource dataSource, string saveLocationFilePath, string fileNameFormatString, string dateTimeFormat)
-            => Document.Create(container => CreatePDFBody(container, dataSource))
-                .GeneratePdf(CreateSaveFilePath(saveLocationFilePath, fileNameFormatString, dataSource.CodeReview.ProjectName, dataSource.CodeReview.ReviewNumber.ToString(), dateTimeFormat));
+        public string GeneratePDF(CodeReviewReportDataSource dataSource, string saveLocationFilePath, string fileNameFormatString, string dateTimeFormat)
+        {
+            var filePath = CreateSaveFilePath(saveLocationFilePath, fileNameFormatString, dataSource.CodeReview.ProjectName, dataSource.CodeReview.ReviewNumber.ToString(), dateTimeFormat);
+            Document.Create(container => CreatePDFBody(container, dataSource)).GeneratePdf(filePath);
+            return filePath;
+        }
 
-        public void GenerateMergedPDF(List<CodeReviewReportDataSource> dataSources, string saveLocationFilePath, string fileNameFormatString, string dateTimeFormat)
+        public string GenerateMergedPDF(List<CodeReviewReportDataSource> dataSources, string saveLocationFilePath, string fileNameFormatString, string dateTimeFormat)
         {
             var dataSourceForTitle = dataSources.FirstOrDefault();
-            Document.Create(container =>
-                dataSources.ForEach(ds => CreatePDFBody(container, ds)))
-                .GeneratePdf(CreateSaveFilePath(saveLocationFilePath, fileNameFormatString, dataSourceForTitle.CodeReview.ProjectName, "MergedReport", dateTimeFormat));
+            var filePath = CreateSaveFilePath(saveLocationFilePath, fileNameFormatString, dataSourceForTitle.CodeReview.ProjectName, "MergedReport", dateTimeFormat);
+            Document.Create(container => dataSources.ForEach(ds => CreatePDFBody(container, ds))).GeneratePdf(filePath);
+            return filePath;
         }
 
         private string CreateSaveFilePath(string saveLocationFilePath, string fileNameFormatString, string projectName, string reviewNumber, string dateTimeFormat)
-            => Path.ChangeExtension(Path.Combine(saveLocationFilePath, string.Format(fileNameFormatString, projectName, reviewNumber, DateTime.Now.ToString(dateTimeFormat, new DateTimeFormatInfo { DateSeparator = "-" }))), ".pdf");
+        {
+            var filePath = Path.ChangeExtension(Path.Combine(saveLocationFilePath, string.Format(fileNameFormatString, projectName, reviewNumber, DateTime.Now.ToString(dateTimeFormat, new DateTimeFormatInfo { DateSeparator = "-" }))), ".pdf");
+            if (!Directory.Exists(saveLocationFilePath))
+            {
+                Console.WriteLine($"Creating new directory: {saveLocationFilePath}");
+                try { Directory.CreateDirectory(saveLocationFilePath); }
+                catch (Exception ex) { throw new Exception($"Error: Unable to create directory ({ex.Message}).\nExiting."); }
+            }
+            return filePath;
+        }
 
         public void CreatePDFBody(IDocumentContainer container, CodeReviewReportDataSource dataSource)
         {

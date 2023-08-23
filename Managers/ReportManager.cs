@@ -19,7 +19,7 @@ namespace TFSCodeReviewTool
             _CodeReviewReport = new CodeReviewReport();
         }
 
-        public void GenerateCodeReviewReportPDF(CodeReviewReportDataSource dataSource) => _CodeReviewReport.GeneratePDF(dataSource, _SaveLocationFilePath, _FileNameFormatString, _DateTimeFormatString);
-        public void GenerateCodeReviewReportPDF(List<CodeReviewReportDataSource> dataSources) => _CodeReviewReport.GenerateMergedPDF(dataSources, _SaveLocationFilePath, _FileNameFormatString, _DateTimeFormatString);
+        public string GenerateCodeReviewReportPDF(CodeReviewReportDataSource dataSource) => _CodeReviewReport.GeneratePDF(dataSource, _SaveLocationFilePath, _FileNameFormatString, _DateTimeFormatString);
+        public string GenerateCodeReviewReportPDF(List<CodeReviewReportDataSource> dataSources) => _CodeReviewReport.GenerateMergedPDF(dataSources, _SaveLocationFilePath, _FileNameFormatString, _DateTimeFormatString);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TFSCodeReviewTool.Managers.Managers;
 using TFSCodeReviewTool.ReportDataSources;
 
@@ -28,8 +29,19 @@ namespace TFSCodeReviewTool
                 if (codeReviewData != default) { reportDataSources.Add(new CodeReviewReportDataSource(codeReviewData)); }
             }
 
-            if (opts.IndividualReports) { reportDataSources.ForEach(rds => reportManager.GenerateCodeReviewReportPDF(rds)); }
-            else { reportManager.GenerateCodeReviewReportPDF(reportDataSources); }
+            if (opts.IndividualReports)
+            {
+                reportDataSources.ForEach(rds =>
+                {
+                    var filePath = reportManager.GenerateCodeReviewReportPDF(rds);
+                    if (opts.AutoOpenPDF) { Process.Start(filePath); }
+                });
+            }
+            else
+            {
+                var filePath = reportManager.GenerateCodeReviewReportPDF(reportDataSources);
+                if (opts.AutoOpenPDF) { Process.Start(filePath); }
+            }
         }
     }
 }
